@@ -1,3 +1,4 @@
+// Package lab provides tools for geotechnical lab and index testing
 package lab
 
 import "errors"
@@ -11,21 +12,23 @@ type Sieve struct {
 // SieveTest is a type that holds all data about a soil sample
 // prepared for grain size analysis.
 type SieveTest struct {
-	InitialMass float64
-	DryMass     float64
-	WashedMass  float64
-	Sieves      []Sieve
+	InitialMass float64 // initial mass of a sample (at in-situ moisture content)
+	DryMass     float64 // mass of sample after drying
+	WashedMass  float64 // mass of sample after washing away fines and drying
+	Sieves      []Sieve // represents the set of sieves used for a test
 }
 
 // PercentPassingSieve is the percentage of soil mass that passed
 // through a single sieve.
 type PercentPassingSieve struct {
-	Size           float64
-	MassPassing    float64
-	PercentPassing float64
+	Size           float64 // size of the sieve, in mm
+	MassPassing    float64 // mass that passed through this sieve, in grams
+	PercentPassing float64 // percent (of the total dry sample mass) that passed this sieve
 }
 
-// AddSieve adds a new sieve, with mass, to the sieve test stack
+// AddSieve adds a new sieve of a given size and mass to the sieve test stack.
+// Size must be in mm while mass must be in grams.
+// AddSieve will keep the slice of sieves sorted from largest to smallest based on size.
 func (t *SieveTest) AddSieve(size float64, mass float64) (err error) {
 
 	if size <= 0 {
@@ -58,13 +61,16 @@ func (t *SieveTest) AddSieve(size float64, mass float64) (err error) {
 	return nil
 }
 
-// RemoveSieve removes a single sieve at a specified position
+// RemoveSieve removes a single sieve at a specified position (from 0 to slice length)
 // from the set of sieves in a SieveTest
 func (t *SieveTest) RemoveSieve(position int) {
 	t.Sieves = append(t.Sieves[:position], t.Sieves[position+1:]...)
 }
 
-// Passing calculates the percent mass passing each sieve in a sieve test
+// Passing calculates the percent mass passing each of the sieves
+// currently in the Sieves slice. It returns a slice of
+// PercentPassingSieve objects, holding the size, mass passing, and percent passing
+// for each sieve tested.
 func (t *SieveTest) Passing() (result []PercentPassingSieve, err error) {
 
 	if len(t.Sieves) == 0 {
