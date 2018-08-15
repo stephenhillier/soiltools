@@ -1,6 +1,8 @@
 package lab
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestAddSieve(t *testing.T) {
 	newTest := SieveTest{}
@@ -61,7 +63,5 @@ func TestCalculatePassing(t *testing.T) {
 		if result[i].PercentPassing != testCase.wantPercentPassing {
 			t.Errorf("Percent passing on %v mm sieve incorrect. got: %v, want: %v", testCase.size, result[i].PercentPassing, testCase.wantPercentPassing)
 		}
-	}
-	if result[0].MassPassing != 400 {
 	}
 }
